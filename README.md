@@ -1,53 +1,53 @@
-# Nextgen Gaming Experience
+# Nextgen Topup Interface
 
-An experimental game top-up web experience that explores unconventional UI/UX design through manual creative direction and AI-assisted development.
+An experimental game top-up web interface exploring next-generation visual experiences through manual UI design and AI-assisted development.
 
 ## About the Project
 
-Nextgen Gaming Experience is a personal project focused on reimagining the visual and interactive experience of a game top-up website.
+Nextgen Topup Interface is a personal web design and development project that explores a fresh approach to game top-up platforms.
 
-Unlike conventional top-up platforms, this project explores a more distinctive approach to interface design, combining creative visual concepts, thoughtful layouts, and interactive elements.
+The project focuses on creating a distinctive interface that goes beyond conventional top-up website designs, emphasizing visual identity, creative layouts, and interactive user experiences.
 
-The design direction, visual concepts, layout decisions, and UI customizations are manually planned and refined, while AI is used as a development assistant to help transform those ideas into a functional website.
+The design concepts, visual direction, layout composition, and UI customizations are manually created and refined, while AI is utilized as a development assistant to help transform these ideas into a functional web interface.
 
 ## Design & Development Approach
 
-- **Manual UI/UX Design** — Visual direction, layout composition, styling, and interface decisions are manually designed and customized.
-- **AI-Assisted Development** — AI tools assist in generating, structuring, and implementing website code.
-- **Human-Driven Refinement** — AI-generated code is manually reviewed, modified, and refined to match the intended design.
-- **Experimental Visual Experience** — Exploring unconventional layouts, distinctive aesthetics, and interactive elements beyond typical top-up website designs.
+- **Manual UI Design** — Visual concepts, layout composition, typography, styling, and design decisions are manually directed and customized.
+- **AI-Assisted Development** — AI tools are used to assist with code generation, structuring, and implementation.
+- **Manual Code Refinement** — AI-generated code is reviewed, modified, and adjusted manually to achieve the intended design.
+- **Creative Exploration** — Experimenting with unconventional layouts, distinctive visual aesthetics, and interactive elements.
 
 ## Project Goals
 
-- Explore alternative approaches to game top-up website design.
-- Combine manual design creativity with AI-assisted coding.
-- Create a distinctive and engaging user interface.
+- Explore new possibilities in game top-up interface design.
+- Combine manual design creativity with AI-assisted development.
+- Create a distinctive and engaging digital experience.
 - Improve UI/UX design and front-end development skills.
 
 ---
 
-# Nextgen Gaming Experience (Bahasa Indonesia)
+# Nextgen Topup Interface (Bahasa Indonesia)
 
-Sebuah project eksplorasi website top-up game yang mencoba menghadirkan pengalaman UI/UX berbeda melalui arahan desain kreatif secara manual dan pengembangan berbantuan AI.
+Sebuah project eksplorasi antarmuka website top-up game yang menghadirkan pendekatan visual berbeda melalui desain UI secara manual dan pengembangan berbantuan AI.
 
 ## Tentang Project
 
-Nextgen Gaming Experience merupakan project personal yang berfokus pada eksplorasi ulang pengalaman visual dan interaktif sebuah website top-up game.
+Nextgen Topup Interface merupakan project personal yang mengeksplorasi pendekatan baru dalam merancang antarmuka website top-up game.
 
-Berbeda dari platform top-up pada umumnya, project ini mengeksplorasi pendekatan desain antarmuka yang lebih khas melalui konsep visual kreatif, komposisi layout, dan elemen interaktif.
+Project ini berfokus pada penciptaan tampilan yang memiliki karakter visual tersendiri dan tidak terpaku pada desain website top-up konvensional, dengan mengutamakan identitas visual, komposisi layout kreatif, serta pengalaman pengguna yang interaktif.
 
-Arah desain, konsep visual, penentuan layout, serta penyesuaian UI dirancang dan disempurnakan secara manual. Sementara itu, AI dimanfaatkan sebagai asisten pengembangan untuk membantu menerjemahkan ide tersebut menjadi website yang fungsional.
+Konsep desain, arah visual, komposisi layout, dan kustomisasi UI dirancang serta disempurnakan secara manual. Sementara itu, AI dimanfaatkan sebagai asisten pengembangan untuk membantu menerjemahkan ide tersebut menjadi antarmuka website yang fungsional.
 
 ## Pendekatan Desain & Pengembangan
 
-- **Desain UI/UX Manual** — Arah visual, komposisi layout, styling, dan keputusan desain dirancang serta dikustomisasi secara manual.
-- **Pengembangan Berbantuan AI** — AI digunakan untuk membantu menghasilkan, menyusun, dan mengimplementasikan kode website.
-- **Penyempurnaan Manual** — Kode yang dihasilkan AI tetap ditinjau, dimodifikasi, dan disempurnakan sesuai desain yang diinginkan.
-- **Eksplorasi Visual Eksperimental** — Mengeksplorasi layout yang tidak konvensional, estetika visual yang khas, dan elemen interaktif di luar desain website top-up pada umumnya.
+- **Desain UI Manual** — Konsep visual, komposisi layout, tipografi, styling, dan keputusan desain diarahkan serta dikustomisasi secara manual.
+- **Pengembangan Berbantuan AI** — AI digunakan untuk membantu proses pembuatan, penyusunan, dan implementasi kode.
+- **Penyempurnaan Kode Manual** — Kode yang dihasilkan AI tetap ditinjau, dimodifikasi, dan disesuaikan secara manual agar sesuai dengan desain yang direncanakan.
+- **Eksplorasi Kreatif** — Bereksperimen dengan layout yang tidak konvensional, estetika visual yang khas, dan elemen interaktif.
 
 ## Tujuan Project
 
-- Mengeksplorasi pendekatan alternatif dalam desain website top-up game.
-- Menggabungkan kreativitas desain manual dengan AI-assisted coding.
-- Menciptakan antarmuka yang khas dan memberikan pengalaman pengguna yang menarik.
+- Mengeksplorasi kemungkinan baru dalam desain antarmuka website top-up game.
+- Menggabungkan kreativitas desain manual dengan pengembangan berbantuan AI.
+- Menciptakan pengalaman digital yang khas dan menarik.
 - Mengembangkan kemampuan UI/UX design dan front-end development.
