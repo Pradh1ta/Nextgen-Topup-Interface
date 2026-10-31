@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <!-- Pengaturan karakter encoder dokumen -->
+  <meta charset="utf-8">
+  <!-- Pengaturan viewport responsif agar fit di layar HP & Desktop -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Judul Dokumen Website -->
+  <title>Pradpedia – Top Up Game</title>
+  
+  <!-- Preconnect untuk mempercepat koneksi Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Memuat Google Fonts (Poppins & Montserrat) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       FONT LOKAL SETUP
+       ========================================================================== */
+    @font-face {
+      font-family: 'ValorantFont';
+      src: url('fonts/VALORANT-Font.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    /* ==========================================================================
+       VARIABLES & BASE SETUP
+       ========================================================================== */
+    :root {
+      --bg: #0a191d;
+      --bg2: #0f2e34;
+      --teal: #19e3d6;
+      --teal2: #0b8fb0;
+      --ink: #f2fbfb;
+      --mute: #8fb3b8;
+      
+      --glass: rgba(18, 64, 72, .38);
+      --edge: rgba(120, 255, 245, .35);
+      
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Poppins', system-ui, sans-serif;
+      color: var(--ink);
+      overflow-x: hidden;
+      background: radial-gradient(1200px 700px at 80% 20%, #14525c 0%, transparent 70%), var(--bg);
+      background-attachment: fixed;
+    }
+
+    body.no-scroll {
+      height: 100vh !important;
+      overflow: hidden !important;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(25, 227, 214, .07) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(25, 227, 214, .07) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+
+    /* MOUSE SPOTLIGHT FLASHLIGHT EFFECT */
+    #cursor-spotlight {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 600px;
+      height: 600px;
+      margin-left: -300px;
+      margin-top: -300px;
+      background: radial-gradient(circle, rgba(25, 227, 214, 0.12) 0%, rgba(25, 227, 214, 0) 70%);
+      pointer-events: none;
+      z-index: 1;
+      transition: transform 0.15s ease-out;
+      border-radius: 50%;
+    }
+
+    button, input {
+      font: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 3px;
+    }
+
+    /* ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 14px 4vw;
+      background: rgba(10, 25, 29, .6);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(120, 255, 245, .12);
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -.3px;
+      cursor: pointer;
+      background: none;
+      border: 0;
+      padding: 0;
+      text-shadow: 0 0 18px var(--teal);
+    }
+
+    .tab {
+      background: none;
+      border: 0;
+      padding: 6px 2px;
+      cursor: pointer;
+      color: var(--mute);
+      font-size: 16px;
+      position: relative;
+      transition: color .25s;
+    }
+
+    .tab:hover, .tab.on {
+      color: var(--ink);
+    }
+
+    .tab.on {
+      font-weight: 600;
+    }
+
+    .tab::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--teal2);
+      box-shadow: 0 0 12px var(--teal2);
+      transform: scaleX(0);
+      transition: transform .3s;
+    }
+
+    .tab.on::after {
+      transform: scaleX(1);
+    }
+
+    .sp { flex: 1; }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .25s, background .25s;
+    }
+
+    .btn.fill {
+      background: var(--teal2);
+      border: 1px solid var(--teal2);
+      box-shadow: 0 0 0 rgba(11, 143, 176, 0);
+    }
+
+    .btn.fill:hover {
+      box-shadow: 0 0 20px rgba(11, 143, 176, .9);
+      transform: translateY(-1px);
+    }
+
+    .btn.line {
+      background: transparent;
+      border: 1px solid var(--ink);
+    }
+
+    .btn.line:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 16px rgba(25, 227, 214, .5);
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 230px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .12);
+      transition: border-color .25s, box-shadow .25s;
+    }
+
+    .search:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 18px rgba(25, 227, 214, .35);
+    }
+
+    .search input {
+      background: none;
+      border: 0;
+      outline: 0;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .search input::placeholder {
+      color: #c3d6d8;
+    }
+
+    /* ==========================================================================
+       PAGE LAYOUT & TRANSITIONS
+       ========================================================================== */
+    main {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 4vw 120px;
+      z-index: 2;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.on {
+      display: block;
+      animation: enter .5s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(.99);
+        filter: blur(6px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+    }
+
+    /* ==========================================================================
+       HOME PAGE (P-HOME)
+       ========================================================================== */
+    .hero-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 56px 0 34px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(54px, 11vw, 118px);
+      font-weight: 400 !important;
+      font-family: 'Poppins', sans-serif !important;
+      letter-spacing: -.04em;
+      line-height: 1;
+      text-shadow: 0 0 40px rgba(25, 227, 214, .45);
+    }
+
+    .hero p {
+      margin: 16px auto 0;
+      max-width: 520px;
+      color: #cfe6e8;
+      font-size: 14px;
+      line-height: 1.7;
+      text-shadow: 0 0 12px rgba(25, 227, 214, 0.6), 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .hero-char {
+      position: absolute;
+      top: 10px;
+      height: auto;
+      pointer-events: none;
+      z-index: 1;
+      filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.35));
+      transition: transform 0.2s cubic-bezier(0.1, 0.5, 0.1, 1);
+      animation: floatHero 6s ease-in-out infinite;
+    }
+
+    .hero-char.left {
+      left: -250px;
+      width: min(1200px, 40vw);
+    }
+
+    .hero-char.right {
+      right: -230px;
+      width: min(600px, 40vw);
+      animation-delay: -3s;
+    }
+
+    /* ==========================================================================
+       GRID MENU GAME (STAGGERED / OFFSET LAYOUT)
+       ========================================================================== */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-top: 70px;
+      align-items: start;
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 22px;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .35), inset 0 0 24px rgba(25, 227, 214, .08);
+    }
+
+    .glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(160, 255, 250, .8), rgba(120, 255, 245, .05) 40%, rgba(120, 255, 245, .05) 60%, rgba(160, 255, 250, .5));
+      -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      -webkit-mask-clip: content-box, border-box;
+      mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      mask-clip: content-box, border-box;
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .game {
+      padding: 14px;
+      cursor: pointer;
+      border: 0;
+      text-align: center;
+      position: relative;
+      transition: transform 0.15s ease-out, box-shadow .3s;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .grid .game:nth-child(1) { --y: 40px; grid-column: 1; grid-row: 1; transform: translateY(var(--y)) scale(1.05); z-index: 3; }
+    .grid .game:nth-child(2) { --y: -10px; grid-column: 2; grid-row: 1; transform: translateY(var(--y)); z-index: 2; }
+    .grid .game:nth-child(3) { --y: -50px; grid-column: 3; grid-row: 1; transform: translateY(var(--y)); z-index: 2; }
+    .grid .game:nth-child(4) { --y: -10px; grid-column: 4; grid-row: 1; transform: translateY(var(--y)); z-index: 2; }
+    .grid .game:nth-child(5) { --y: 40px; grid-column: 5; grid-row: 1; transform: translateY(var(--y)) scale(1.05); z-index: 3; }
+    .grid .game:nth-child(6) { --y: -10px; grid-column: 2; grid-row: 2; transform: translateY(var(--y)); z-index: 1; }
+    .grid .game:nth-child(7) { --y: 10px; grid-column: 3; grid-row: 2; margin-top: -60px !important; transform: translateY(var(--y)); z-index: 1; }
+    .grid .game:nth-child(8) { --y: -10px; grid-column: 4; grid-row: 2; transform: translateY(var(--y)); z-index: 1; }
+
+    .grid .game:hover {
+      z-index: 10;
+      box-shadow: 0 18px 50px rgba(0,0,0,.45), 0 0 36px rgba(25,227,214,.4), inset 0 0 24px rgba(25,227,214,.12);
+    }
+
+    .art {
+      aspect-ratio: 1/1.08;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, .2);
+    }
+
+    .game-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+      position: absolute;
+      inset: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .game:hover .game-img {
+      transform: scale(1.08);
+    }
+
+    .chip {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      z-index: 2;
+      background: rgba(40, 60, 64, .75);
+      backdrop-filter: blur(6px);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fav-btn {
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #7f979b;
+      font-size: 14px;
+      transition: color .2s, transform .2s;
+      line-height: 1;
+    }
+
+    .fav-btn:hover {
+      transform: scale(1.25);
+      color: #ffd700;
+    }
+
+    .fav-btn.active {
+      color: #ffd700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+
+    .pub {
+      display: block;
+      margin: 10px 4px 2px;
+      font-size: 12px;
+      color: var(--mute);
+    }
+
+    .empty {
+      grid-column: 1/-1;
+      text-align: center;
+      color: var(--mute);
+      padding: 40px 0;
+    }
+
+    /* ==========================================================================
+       VALORANT TOP UP PAGE (P-VALO)
+       ========================================================================== */
+    #p-valo.on {
+      height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      overflow: visible !important;
+    }
+
+    .tu {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 30px;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding-top: 0;
+    }
+
+    .vtitle {
+      font-family: 'Valorant' !important;
+      font-size: clamp(46px, 9vw, 96px);
+      line-height: 1;
+      margin: 0;
+      background: linear-gradient(90deg, #fff 70%, #9fd9d8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-align: center;
+    }
+
+    .vsub {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(16px, 2.4vw, 26px);
+      margin: -6px 0 28px;
+      text-align: center;
+    }
+
+    .pk {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .opt {
+      padding: 0;
+      border: 0;
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .3s;
+    }
+
+    .opt:hover {
+      transform: translateY(-4px);
+    }
+
+    .opt .hd {
+      padding: 7px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .05));
+    }
+
+    /* HOT SALE BADGE ANIMATION */
+    .opt .hd i {
+      font-style: normal;
+      color: #5ffcee;
+      margin-left: 6px;
+      display: inline-block;
+      animation: pulseBadge 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #5ffcee); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 8px #5ffcee); }
+    }
+
+    .opt .bd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 16px;
+      gap: 8px;
+    }
+
+    .old {
+      display: block;
+      font-size: 13px;
+      color: #7f979b;
+      text-decoration: line-through;
+      text-decoration-color: #e33;
+      text-decoration-thickness: 2px;
+    }
+
+    .new {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .coin {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      flex: none;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 35% 30%, #8a9599, #4b5559);
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .35);
+    }
+
+    .coin svg {
+      width: 26px;
+      fill: #fff;
+    }
+
+    .opt.sel {
+      transform: translateY(-4px);
+      box-shadow: 0 0 0 2px var(--teal), 0 0 34px rgba(25, 227, 214, .75), inset 0 0 30px rgba(25, 227, 214, .28);
+      background: rgba(20, 100, 110, .5);
+    }
+
+    .opt.sel .coin {
+      background: radial-gradient(circle at 35% 30%, #7ffff3, #0a9aa0);
+      box-shadow: 0 0 18px var(--teal);
+    }
+
+    .form {
+      margin-top: 20px;
+      padding: 20px 24px 24px;
+    }
+
+    .form label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .form input {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, .14);
+      outline: 0;
+      font-size: 14px;
+      transition: border-color .25s, box-shadow .25s;
+    }
+
+    /* INPUT GLOW FOCUS INTERACTION */
+    .form input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 22px rgba(25, 227, 214, .6), inset 0 0 10px rgba(25, 227, 214, .2);
+      animation: focusPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes focusPulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(25, 227, 214, .5); }
+      50% { box-shadow: 0 0 28px rgba(25, 227, 214, .8); }
+    }
+
+    .form input.err {
+      border-color: #ff6b6b;
+      animation: shake .35s;
+    }
+
+    @keyframes shake {
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--mute);
+      margin: 8px 0 0;
+    }
+
+    .char {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .char::before {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(25, 227, 214, 0.35);
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .char-img {
+      position: relative;
+      z-index: 1;
+      max-height: 95vh;
+      width: auto;
+      object-fit: contain;
+      filter: none !important;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ==========================================================================
+       CART / CHECKOUT BUTTON (FLOATING)
+       ========================================================================== */
+    .cart {
+      position: fixed;
+      right: max(4vw, 16px);
+      bottom: max(20px, env(safe-area-inset-bottom, 0px));
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      border: 1px solid var(--teal);
+      border-radius: 6px;
+      background: rgba(5, 28, 34, .85);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      box-shadow: 0 0 26px rgba(25, 227, 214, .35);
+      transition: transform .25s, box-shadow .3s;
+    }
+
+    .cart:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(25, 227, 214, .7);
+    }
+
+    .cart svg {
+      width: 34px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .cart .t {
+      border-left: 1px dashed rgba(255, 255, 255, .3);
+      padding-left: 14px;
+      font-family: 'Montserrat', sans-serif;
+      text-align: left;
+    }
+
+    .cart .t span {
+      display: block;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .cart .t strong {
+      display: block;
+      font-size: 13px;
+      transition: color .3s;
+    }
+
+    .cart.pop .t strong {
+      animation: pop .4s;
+    }
+
+    @keyframes pop {
+      40% { transform: scale(1.25); color: var(--teal); }
+    }
+
+    .cart[hidden] {
+      display: none;
+    }
+
+    /* ==========================================================================
+       TRANSACTION PAGE (P-TX)
+       ========================================================================== */
+    .tx {
+      padding-top: 48px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .tx h2 {
+      font-size: 34px;
+      margin: 0 0 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 22px;
+      margin-bottom: 14px;
+    }
+
+    .row small {
+      color: var(--mute);
+      display: block;
+    }
+
+    .row b {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .ok {
+      color: #5ffcee;
+      font-size: 12px;
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATIONS
+       ========================================================================== */
+    #toasts {
+      position: fixed;
+      top: calc(78px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: grid;
+      gap: 10px;
+      width: min(92vw, 380px);
+    }
+
+    .toast {
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: rgba(8, 40, 46, .92);
+      border: 1px solid var(--teal);
+      box-shadow: 0 0 28px rgba(25, 227, 214, .45);
+      font-size: 14px;
+      animation: tin .4s cubic-bezier(.2, .9, .3, 1.3);
+    }
+
+    .toast.bad {
+      border-color: #ff6b6b;
+      box-shadow: 0 0 28px rgba(255, 107, 107, .35);
+    }
+
+    .toast.out {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: .3s;
+    }
+
+    @keyframes tin {
+      from { opacity: 0; transform: translateY(-16px) scale(.95); }
+    }
+
+    /* ==========================================================================
+       MEDIA QUERIES (RESPONSIVE)
+       ========================================================================== */
+    @media (max-width: 900px) {
+      .hero-char { display: none; }
+      #cursor-spotlight { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      #p-valo.on {
+        height: auto;
+        overflow: auto !important;
+      }
+      body.no-scroll {
+        height: auto !important;
+        overflow: auto !important;
+      }
+      .tu { grid-template-columns: 1fr; }
+      .char { display: none; }
+      .sp { display: none; }
+      nav { gap: 12px; }
+      .search { flex: 1; min-width: 0; }
+      
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .grid .game:nth-child(n) {
+        transform: none !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .pk { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* ==========================================================================
+       EFEK FLOATING KONSTAN PADA CONTENT KARTU GAME
+       ========================================================================== */
+    .game .art, 
+    .game .pub {
+      animation: floatContent 4s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    .grid .game:nth-child(1) .art, .grid .game:nth-child(1) .pub { animation-duration: 4.2s; }
+    .grid .game:nth-child(2) .art, .grid .game:nth-child(2) .pub { animation-duration: 3.8s; animation-delay: -0.5s; }
+    .grid .game:nth-child(3) .art, .grid .game:nth-child(3) .pub { animation-duration: 4.5s; animation-delay: -1s; }
+    .grid .game:nth-child(4) .art, .grid .game:nth-child(4) .pub { animation-duration: 3.6s; animation-delay: -1.5s; }
+    .grid .game:nth-child(5) .art, .grid .game:nth-child(5) .pub { animation-duration: 4s;   animation-delay: -0.8s; }
+    .grid .game:nth-child(6) .art, .grid .game:nth-child(6) .pub { animation-duration: 4.3s; animation-delay: -2s; }
+    .grid .game:nth-child(7) .art, .grid .game:nth-child(7) .pub { animation-duration: 3.9s; animation-delay: -1.2s; }
+    .grid .game:nth-child(8) .art, .grid .game:nth-child(8) .pub { animation-duration: 4.6s; animation-delay: -2.5s; }
+
+    @keyframes floatContent {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOUSE SPOTLIGHT FLASHLIGHT CONTAINER -->
+  <div id="cursor-spotlight"></div>
+
+  <!-- NAVIGATION BAR -->
+  <nav>
+    <button class="logo" data-go="home"></button>
+    <button class="tab on" data-go="home" id="t-home">Home</button>
+    <button class="tab" data-go="tx" id="t-tx">Transaction</button>
+    
+    <span class="sp"></span>
+    
+    <button class="btn fill" id="signup">Sign up</button>
+    <button class="btn line" id="login">Login</button>
+    
+    <label class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+        <circle cx="10.5" cy="10.5" r="7"/>
+        <path d="m16 16 5 5"/>
+      </svg>
+      <input id="q" placeholder="Search Game" aria-label="Search Game" autocomplete="off">
+    </label>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    
+    <!-- 1. HOME PAGE -->
+    <section class="page on" id="p-home">
+      <div class="hero-wrapper">
+        <img src="images/character/ling.png" alt="Ling MLBB" class="hero-char left" id="char-left">
+        <img src="images/character/scaramouche.png" alt="Scaramouche Genshin" class="hero-char right" id="char-right">
+
+        <div class="hero">
+          <h1>Pradpedia</h1>
+          <p>Platform top-up game terpercaya dengan layanan instan, aman, dan praktis untuk berbagai game mobile hingga PC.</p>
+        </div>
+      </div>
+
+      <!-- Grid Container Kartu Game -->
+      <div class="grid" id="games"></div>
+    </section>
+
+    <!-- 2. VALORANT TOP UP PAGE -->
+    <section class="page" id="p-valo">
+      <div class="tu">
+        <div>
+          <h1 class="vtitle">VALORANT</h1>
+          <div class="vsub">TOP UP VALORANT POINT</div>
+          
+          <div class="pk" id="pk" role="radiogroup" aria-label="Pilih paket Valorant Point"></div>
+          
+          <div class="glass form">
+            <label for="rid">Riot ID</label>
+            <input id="rid" placeholder="Masukkan Riot ID, contoh: Pradipta#1234" autocomplete="off">
+            <p class="hint">Pastikan Riot ID benar. Point dikirim langsung ke akun ini.</p>
+          </div>
+        </div>
+        
+        <div class="char" aria-hidden="true">
+          <img src="images/character/jett.png" alt="Valorant Character" class="char-img">
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TRANSACTION PAGE -->
+    <section class="page" id="p-tx">
+      <div class="tx">
+        <h2>Transaction</h2>
+        <div id="txl"></div>
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- FLOATING CART & TOASTS -->
+  <button class="cart" id="cart" hidden aria-label="Checkout">
+    <svg viewBox="0 0 32 32">
+      <path d="M2 4h5l3 15h15l3-11H9"/>
+      <circle cx="12" cy="26" r="2"/>
+      <circle cx="23" cy="26" r="2"/>
+    </svg>
+    <div class="t">
+      <span>TOTAL</span>
+      <strong id="tot">Rp. 0</strong>
+    </div>
+  </button>
+  
+  <div id="toasts" aria-live="polite"></div>
+
+  <!-- JAVASCRIPT / LOGIC -->
+  <script>
+    // ==========================================================================
+    // DATA & STATE MANAGEMENT
+    // ==========================================================================
+    const gameList = [
+      { name: 'Honor of King', publisher: 'Tencent', image: 'images/games/hok.webp', isFavorite: false },
+      { name: 'Mobile Legend', publisher: 'Moonton', image: 'images/games/ml.jpg', isFavorite: false },
+      { name: 'Genshin Impact', publisher: 'HoYoverse', image: 'images/games/genshin.png', isFavorite: false },
+      { name: 'PUBG Mobile', publisher: 'Krafton', image: 'images/games/pubg.png', isFavorite: false },
+      { name: 'Call of Duty M', publisher: 'Activision', image: 'images/games/codm.webp', isFavorite: false },
+      { name: 'Delta Force M', publisher: 'TiMi Studio', image: 'images/games/delta.png', isFavorite: false },
+      { name: 'Valorant', publisher: 'Riot Games', image: 'images/games/valorant.png', targetPage: 'valo', isFavorite: false },
+      { name: 'Roblox', publisher: 'Roblox Corp', image: 'images/games/roblox.jpeg', isFavorite: false }
+    ];
+
+    const packageOptions = [
+      { points: 475, oldPrice: 63000, newPrice: 53000, isHotSale: true },
+      { points: 950, oldPrice: 120000, newPrice: 104000, isHotSale: true },
+      { points: 1475, oldPrice: 180000, newPrice: 161000, isHotSale: false },
+      { points: 2000, oldPrice: 240000, newPrice: 214000, isHotSale: false }
+    ];
+
+    // State Variables
+    let selectedPackageIndex = null;
+    let transactionHistory = [];
+    let currentPage = 'home';
+
+    // Utilitas DOM & Format
+    const formatRupiah = (amount) => 'Rp. ' + amount.toLocaleString('id-ID');
+    const getEl = (selector) => document.querySelector(selector);
+    const getAllEl = (selector) => document.querySelectorAll(selector);
+
+    // ==========================================================================
+    // CORE FUNCTIONS
+    // ==========================================================================
+    
+    function showToast(message, isError = false) {
+      const toastEl = document.createElement('div');
+      toastEl.className = 'toast' + (isError ? ' bad' : '');
+      toastEl.textContent = message;
+      getEl('#toasts').append(toastEl);
+      
+      setTimeout(() => {
+        toastEl.classList.add('out');
+        setTimeout(() => toastEl.remove(), 300);
+      }, 2600);
+    }
+
+    function navigateToPage(pageId) {
+      currentPage = pageId;
+      getAllEl('.page').forEach(page => page.classList.remove('on'));
+      
+      const targetElement = getEl('#p-' + pageId);
+      void targetElement.offsetWidth; // Trigger reflow untuk animasi
+      targetElement.classList.add('on');
+      
+      document.body.classList.toggle('no-scroll', pageId === 'valo');
+      
+      getEl('#t-home').classList.toggle('on', pageId === 'home');
+      getEl('#t-tx').classList.toggle('on', pageId === 'tx');
+      
+      getEl('#cart').hidden = (pageId !== 'valo');
+      
+      if (pageId === 'tx') renderTransactionHistory();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderGameList(searchQuery = '') {
+      const filteredGames = gameList.filter(game => 
+        game.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      const gamesContainer = getEl('#games');
+      
+      if (filteredGames.length === 0) {
+        gamesContainer.innerHTML = '<div class="empty">Game tidak ditemukan. Coba kata kunci lain.</div>';
+        return;
+      }
+
+      gamesContainer.innerHTML = filteredGames.map(game => {
+        const realIndex = gameList.indexOf(game);
+        return `
+        <button class="glass game" data-index="${realIndex}" aria-label="${game.name}">
+          <div class="art">
+            <span class="chip">
+              <span class="fav-btn ${game.isFavorite ? 'active' : ''}" data-fav="${realIndex}" title="Tambah ke Favorit">★</span>
+              ${game.name}
+            </span>
+            <img src="${game.image}" alt="${game.name}" class="game-img">
+          </div>
+          <span class="pub">${game.publisher}</span>
+        </button>`;
+      }).join('');
+    }
+
+    function renderTransactionHistory() {
+      const transactionContainer = getEl('#txl');
+      
+      if (transactionHistory.length === 0) {
+        transactionContainer.innerHTML = `
+          <div class="glass row">
+            <div>
+              <b>Belum ada transaksi</b>
+              <small>Pilih game di Home, lalu checkout untuk melihat riwayat di sini.</small>
+            </div>
+          </div>`;
+        return;
+      }
+
+      transactionContainer.innerHTML = transactionHistory.map(history => `
+        <div class="glass row">
+          <div>
+            <b>${history.title}</b>
+            <small>${history.riotId} &middot; ${history.date}</small>
+          </div>
+          <div style="text-align:right">
+            <b>${formatRupiah(history.price)}</b><br>
+            <span class="ok">Berhasil</span>
+          </div>
+        </div>`).join('');
+    }
+
+    // ==========================================================================
+    // EVENT LISTENERS
+    // ==========================================================================
+
+    // 1. Navigasi Global
+    document.addEventListener('click', (event) => {
+      const navButton = event.target.closest('[data-go]');
+      if (navButton) navigateToPage(navButton.dataset.go);
+    });
+
+    // 2. Interaksi Grid Game (Favorit & Pilih Game)
+    getEl('#games').addEventListener('click', (event) => {
+      const favButton = event.target.closest('[data-fav]');
+      
+      if (favButton) {
+        event.stopPropagation();
+        const index = parseInt(favButton.dataset.fav);
+        
+        gameList[index].isFavorite = !gameList[index].isFavorite;
+        
+        if (gameList[index].isFavorite) {
+          const targetGame = gameList.splice(index, 1)[0];
+          gameList.unshift(targetGame); // Pindahkan game favorit ke urutan terdepan
+          showToast(`★ ${targetGame.name} ditambahkan ke Favorit`);
+        } else {
+          showToast(`${gameList[index].name} dihapus dari favorit.`);
+        }
+        
+        renderGameList(getEl('#q').value);
+        return;
+      }
+
+      const gameButton = event.target.closest('.game');
+      if (!gameButton) return;
+      
+      const selectedGame = gameList[gameButton.dataset.index];
+      if (selectedGame.targetPage) {
+        navigateToPage(selectedGame.targetPage);
+      } else {
+        showToast(selectedGame.name + ' segera hadir. Coba Valorant dulu.');
+      }
+    });
+
+    // 3. Fitur Pencarian Game
+    getEl('#q').addEventListener('input', (event) => {
+      if (currentPage !== 'home') navigateToPage('home');
+      renderGameList(event.target.value);
+    });
+
+    // 4. Render Paket Top-Up Valorant
+    const coinSVG = '<svg viewBox="0 0 24 24"><path d="M2 5l9 12 3-3.5L8 5zm10 0 10 0-7 9-3-4z"/></svg>';
+    getEl('#pk').innerHTML = packageOptions.map((pkg, index) => `
+      <button class="glass opt" role="radio" aria-checked="false" data-index="${index}">
+        <div class="hd">${pkg.points} POINT${pkg.isHotSale ? '<i>HOT SALE 🔥</i>' : ''}</div>
+        <div class="bd">
+          <div>
+            <span class="old">${formatRupiah(pkg.oldPrice)}</span>
+            <span class="new">${formatRupiah(pkg.newPrice)}</span>
+          </div>
+          <div class="coin">${coinSVG}</div>
+        </div>
+      </button>`).join('');
+
+    // 5. Pilih Paket Top-Up
+    getEl('#pk').addEventListener('click', (event) => {
+      const optionButton = event.target.closest('.opt');
+      if (!optionButton) return;
+      
+      selectedPackageIndex = parseInt(optionButton.dataset.index);
+      
+      getAllEl('.opt').forEach(opt => {
+        const isSelected = (opt === optionButton);
+        opt.classList.toggle('sel', isSelected);
+        opt.setAttribute('aria-checked', isSelected);
+      });
+      
+      getEl('#tot').textContent = formatRupiah(packageOptions[selectedPackageIndex].newPrice);
+      
+      const cartEl = getEl('#cart');
+      cartEl.classList.remove('pop');
+      void cartEl.offsetWidth; // Trigger animasi pop
+      cartEl.classList.add('pop');
+    });
+
+    // 6. Checkout & Animasi Confetti
+    getEl('#cart').addEventListener('click', () => {
+      const riotIdInput = getEl('#rid');
+      const riotId = riotIdInput.value.trim();
+      
+      if (selectedPackageIndex === null) return showToast('Pilih paket point dulu.', true);
+      if (!riotId) {
+        riotIdInput.classList.remove('err');
+        void riotIdInput.offsetWidth;
+        riotIdInput.classList.add('err');
+        riotIdInput.focus();
+        return showToast('Riot ID belum diisi.', true);
+      }
+      
+      const selectedPackage = packageOptions[selectedPackageIndex];
+      
+      transactionHistory.unshift({
+        title: `${selectedPackage.points} Valorant Point`,
+        riotId: riotId,
+        price: selectedPackage.newPrice,
+        date: new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })
+      });
+      
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.8 },
+          colors: ['#19e3d6', '#0b8fb0', '#ffffff', '#5ffcee']
+        });
+      }
+
+      showToast(`Checkout berhasil: ${selectedPackage.points} Point untuk ${riotId}, total ${formatRupiah(selectedPackage.newPrice)}.`);
+      
+      selectedPackageIndex = null;
+      getEl('#tot').textContent = formatRupiah(0);
+      getAllEl('.opt').forEach(opt => {
+        opt.classList.remove('sel');
+        opt.setAttribute('aria-checked', 'false');
+      });
+      riotIdInput.value = '';
+    });
+
+    getEl('#signup').onclick = () => showToast('Pendaftaran akan segera dibuka.');
+    getEl('#login').onclick = () => showToast('Login akan segera dibuka.');
+
+    // ==========================================================================
+    // VISUAL EFFECTS & PARALLAX
+    // ==========================================================================
+
+    const spotlight = getEl('#cursor-spotlight');
+    const charLeft = getEl('#char-left');
+    const charRight = getEl('#char-right');
+
+    document.addEventListener('mousemove', (event) => {
+      const { clientX: x, clientY: y } = event;
+
+      // Efek Mouse Spotlight (Senter)
+      if (spotlight) {
+        spotlight.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
+
+      // Parallax Karakter Ling & Scaramouche di Hero Section
+      if (currentPage === 'home') {
+        const moveX = (x - window.innerWidth / 2) / 45;
+        const moveY = (y - window.innerHeight / 2) / 45;
+
+        if (charLeft) charLeft.style.transform = `translate3d(${-moveX}px, ${-moveY}px, 0)`;
+        if (charRight) charRight.style.transform = `translate3d(${moveX * 0.8}px, ${moveY * 0.8}px, 0)`;
+      }
+    });
+
+    // Efek 3D Tilt pada Kartu Game
+    document.addEventListener('mousemove', (event) => {
+      if (currentPage !== 'home') return;
+      
+      const cards = getAllEl('.game');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        
+        if (event.clientX >= rect.left && event.clientX <= rect.right &&
+            event.clientY >= rect.top && event.clientY <= rect.bottom) {
+          
+          const cardX = event.clientX - rect.left - rect.width / 2;
+          const cardY = event.clientY - rect.top - rect.height / 2;
+          
+          const rotateX = (-cardY / rect.height) * 22;
+          const rotateY = (cardX / rect.width) * 22;
+          
+          const baseY = getComputedStyle(card).getPropertyValue('--y') || '0px';
+          card.style.transform = `perspective(800px) translateY(calc(${baseY} - 10px)) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.08)`;
+        } else {
+          const baseY = getComputedStyle(card).getPropertyValue('--y') || '0px';
+          const isScaled = card.matches(':nth-child(1), :nth-child(5)');
+          card.style.transform = `translateY(${baseY}) ${isScaled ? 'scale(1.05)' : ''}`;
+        }
+      });
+    });
+
+    // ==========================================================================
+    // INISIALISASI APLIKASI
+    // ==========================================================================
+    renderGameList();
+  </script>
+</body>
+</html>
